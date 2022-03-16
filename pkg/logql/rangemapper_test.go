@@ -200,9 +200,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (bytes_over_time({app="foo"}[3m]))`,
 			`sum by (baz) (
 				sum without (
-					downstream<bytes_over_time({app="foo"} [1m] offset 2m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"} [1m] offset 1m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"} [1m]), shard=<nil>>
+					downstream<sum by (baz) (bytes_over_time({app="foo"} [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (bytes_over_time({app="foo"} [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (bytes_over_time({app="foo"} [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -211,9 +211,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (count_over_time({app="foo"}[3m]))`,
 			`sum by (baz) (
 				sum without (
-					downstream<count_over_time({app="foo"} [1m] offset 2m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"} [1m] offset 1m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"} [1m]), shard=<nil>>
+					downstream<sum by (baz) (count_over_time({app="foo"} [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (count_over_time({app="foo"} [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (count_over_time({app="foo"} [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -222,9 +222,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (sum_over_time({app="foo"} | unwrap bar [3m]))`,
 			`sum by (baz) (
 				sum without (
-					downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<sum by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (sum_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -233,9 +233,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (max_over_time({app="foo"} | unwrap bar [3m]))`,
 			`sum by (baz) (
 				max without (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -244,9 +244,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (max_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`sum by (baz) (
 				max by (baz) (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<sum by (baz) (max_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,
@@ -255,9 +255,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (min_over_time({app="foo"} | unwrap bar [3m]))`,
 			`sum by (baz) (
 				min without (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -266,9 +266,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`sum by (baz) (min_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`sum by (baz) (
 				min by (baz) (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<sum by (baz) (min_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,
@@ -516,9 +516,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (bytes_over_time({app="foo"}[3m]))`,
 			`max by (baz) (
 				sum without (
-					downstream<bytes_over_time({app="foo"}[1m] offset 2m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"}[1m] offset 1m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"}[1m]), shard=<nil>>
+					downstream<max by (baz) (bytes_over_time({app="foo"}[1m] offset 2m0s)), shard=<nil>>
+					++ downstream<max by (baz) (bytes_over_time({app="foo"}[1m] offset 1m0s)), shard=<nil>>
+					++ downstream<max by (baz) (bytes_over_time({app="foo"}[1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -527,9 +527,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (count_over_time({app="foo"}[3m]))`,
 			`max by (baz) (
 				sum without (
-					downstream<count_over_time({app="foo"}[1m] offset 2m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"}[1m] offset 1m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"}[1m]), shard=<nil>>
+					downstream<max by (baz) (count_over_time({app="foo"}[1m] offset 2m0s)), shard=<nil>>
+					++ downstream<max by (baz) (count_over_time({app="foo"}[1m] offset 1m0s)), shard=<nil>>
+					++ downstream<max by (baz) (count_over_time({app="foo"}[1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -538,9 +538,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (sum_over_time({app="foo"} | unwrap bar [3m]))`,
 			`max by (baz) (
 				sum without (
-					downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<max by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<max by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<max by (baz) (sum_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -549,9 +549,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (max_over_time({app="foo"} | unwrap bar [3m]))`,
 			`max by (baz) (
 				max without (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -560,9 +560,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (max_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`max by (baz) (
 				max by (baz) (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<max by (baz) (max_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,
@@ -571,9 +571,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (min_over_time({app="foo"} | unwrap bar [3m]))`,
 			`max by (baz) (
 				min without (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -582,9 +582,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`max by (baz) (min_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`max by (baz) (
 				min by (baz) (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<max by (baz) (min_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,
@@ -674,9 +674,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (bytes_over_time({app="foo"}[3m]))`,
 			`min by (baz) (
 				sum without (
-					downstream<bytes_over_time({app="foo"}[1m] offset 2m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"}[1m] offset 1m0s), shard=<nil>>
-					++ downstream<bytes_over_time({app="foo"}[1m]), shard=<nil>>
+					downstream<min by (baz) (bytes_over_time({app="foo"}[1m] offset 2m0s)), shard=<nil>>
+					++ downstream<min by (baz) (bytes_over_time({app="foo"}[1m] offset 1m0s)), shard=<nil>>
+					++ downstream<min by (baz) (bytes_over_time({app="foo"}[1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -685,9 +685,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (count_over_time({app="foo"}[3m]))`,
 			`min by (baz) (
 				sum without (
-					downstream<count_over_time({app="foo"}[1m] offset 2m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"}[1m] offset 1m0s), shard=<nil>>
-					++ downstream<count_over_time({app="foo"}[1m]), shard=<nil>>
+					downstream<min by (baz) (count_over_time({app="foo"}[1m] offset 2m0s)), shard=<nil>>
+					++ downstream<min by (baz) (count_over_time({app="foo"}[1m] offset 1m0s)), shard=<nil>>
+					++ downstream<min by (baz) (count_over_time({app="foo"}[1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -696,9 +696,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (sum_over_time({app="foo"} | unwrap bar [3m]))`,
 			`min by (baz) (
 				sum without (
-					downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<sum_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<min by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<min by (baz) (sum_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<min by (baz) (sum_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -707,9 +707,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (max_over_time({app="foo"} | unwrap bar [3m]))`,
 			`min by (baz) (
 				max without (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -718,9 +718,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (max_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`min by (baz) (
 				max by (baz) (
-					downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<max_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<min by (baz) (max_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,
@@ -729,9 +729,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (min_over_time({app="foo"} | unwrap bar [3m]))`,
 			`min by (baz) (
 				min without (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]), shard=<nil>>
+					downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s)), shard=<nil>>
+					++ downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s)), shard=<nil>>
+					++ downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m])), shard=<nil>>
 				)
 			)`,
 			false,
@@ -740,9 +740,9 @@ func Test_SplitRangeVectorMapping(t *testing.T) {
 			`min by (baz) (min_over_time({app="foo"} | unwrap bar [3m]) by (baz))`,
 			`min by (baz) (
 				min by (baz) (
-					downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz), shard=<nil>>
-					++ downstream<min_over_time({app="foo"} | unwrap bar [1m]) by (baz), shard=<nil>>
+					downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 2m0s) by (baz)), shard=<nil>>
+					++ downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m] offset 1m0s) by (baz)), shard=<nil>>
+					++ downstream<min by (baz) (min_over_time({app="foo"} | unwrap bar [1m]) by (baz)), shard=<nil>>
 				)
 			)`,
 			false,

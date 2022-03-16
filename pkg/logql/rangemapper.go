@@ -31,7 +31,7 @@ func (m RangeVectorMapper) Parse(query string) (bool, syntax.Expr, error) {
 		return true, nil, err
 	}
 
-	modExpr, err := m.Map(origExpr)
+	modExpr, err := m.Map(origExpr, nil)
 	if err != nil {
 		return true, nil, err
 	}
@@ -39,7 +39,7 @@ func (m RangeVectorMapper) Parse(query string) (bool, syntax.Expr, error) {
 	return origExpr.String() == modExpr.String(), modExpr, err
 }
 
-func (m RangeVectorMapper) Map(expr syntax.Expr) (syntax.Expr, error) {
+func (m RangeVectorMapper) Map(expr syntax.Expr, overrideDownstream *syntax.VectorAggregationExpr) (syntax.Expr, error) {
 	// immediately clone the passed expr to avoid mutating the original
 	expr, err := syntax.Clone(expr)
 	if err != nil {
@@ -51,13 +51,13 @@ func (m RangeVectorMapper) Map(expr syntax.Expr) (syntax.Expr, error) {
 		return m.mapVectorAggregationExpr(e)
 	case *syntax.RangeAggregationExpr:
 		// noop - TODO: the aggregation of range aggregation expressions needs to preserve the labels
-		return m.mapRangeAggregationExpr(e), nil
+		return m.mapRangeAggregationExpr(e, overrideDownstream), nil
 	case *syntax.BinOpExpr:
-		lhsMapped, err := m.Map(e.SampleExpr)
+		lhsMapped, err := m.Map(e.SampleExpr, overrideDownstream)
 		if err != nil {
 			return nil, err
 		}
-		rhsMapped, err := m.Map(e.RHS)
+		rhsMapped, err := m.Map(e.RHS, overrideDownstream)
 		if err != nil {
 			return nil, err
 		}
@@ -147,8 +147,17 @@ func (m RangeVectorMapper) mapVectorAggregationExpr(expr *syntax.VectorAggregati
 		return expr, nil
 	}
 
+	// Optimization: if the vector aggregator has grouping, the downstream expression can also have the grouping
+	// in order to reduce the label sets. Does not work with count operation
+	// TODO: handle the case where an additional vector aggregation expression also has grouping.
+	//  Which grouping should be sent downstream?
+	overrideDownstream := expr
+	if expr.Operation == syntax.OpTypeCount || expr.Grouping.Groups == nil {
+		overrideDownstream = nil
+	}
+
 	// Split the vector aggregation child node
-	subMapped, err := m.Map(expr.Left)
+	subMapped, err := m.Map(expr.Left, overrideDownstream)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +174,7 @@ func (m RangeVectorMapper) mapVectorAggregationExpr(expr *syntax.VectorAggregati
 	}, nil
 }
 
-func (m RangeVectorMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregationExpr) syntax.SampleExpr {
+func (m RangeVectorMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregationExpr, overrideDownstream *syntax.VectorAggregationExpr) syntax.SampleExpr {
 	// TODO: In case expr is non-splittable, can we attempt to shard a child node?
 
 	rangeInterval := getRangeInterval(expr)
@@ -179,8 +188,12 @@ func (m RangeVectorMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregation
 	if isSplittableByRange(expr) {
 		switch expr.Operation {
 		case syntax.OpRangeTypeBytes, syntax.OpRangeTypeCount, syntax.OpRangeTypeSum:
+			var downstream syntax.SampleExpr = expr
+			if overrideDownstream != nil {
+				downstream = overrideDownstream
+			}
 			return &syntax.VectorAggregationExpr{
-				Left: m.mapConcatSampleExpr(expr, rangeInterval),
+				Left: m.mapConcatSampleExpr(downstream, rangeInterval),
 				Grouping: &syntax.Grouping{
 					Without: true,
 				},
@@ -193,8 +206,12 @@ func (m RangeVectorMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregation
 					Without: true,
 				}
 			}
+			var downstream syntax.SampleExpr = expr
+			if overrideDownstream != nil {
+				downstream = overrideDownstream
+			}
 			return &syntax.VectorAggregationExpr{
-				Left:      m.mapConcatSampleExpr(expr, rangeInterval),
+				Left:      m.mapConcatSampleExpr(downstream, rangeInterval),
 				Grouping:  grouping,
 				Operation: syntax.OpTypeMax,
 			}
@@ -205,8 +222,12 @@ func (m RangeVectorMapper) mapRangeAggregationExpr(expr *syntax.RangeAggregation
 					Without: true,
 				}
 			}
+			var downstream syntax.SampleExpr = expr
+			if overrideDownstream != nil {
+				downstream = overrideDownstream
+			}
 			return &syntax.VectorAggregationExpr{
-				Left:      m.mapConcatSampleExpr(expr, rangeInterval),
+				Left:      m.mapConcatSampleExpr(downstream, rangeInterval),
 				Grouping:  grouping,
 				Operation: syntax.OpTypeMin,
 			}
