@@ -42,7 +42,7 @@ Promtail yet. There may be one of many root causes:
 - Your pods are running with different labels than the ones Promtail is
   configured to read. Check `scrape_configs` to validate.
 
-## Loki Timeouts (504 errors, context canelled, error processing requests)
+## Loki Timeouts (504 errors, context cancelled, error processing requests)
 
 These errors have many different possible causes. Main things to review with respect to Loki are:
 - Loki configuration querier.query_timeout
